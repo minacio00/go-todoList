@@ -1,0 +1,28 @@
+version: '3.8' 
+
+services:
+  db:
+    image: postgres:alpine
+    # you may want to use secrets for this part, do what you think is best
+    environment:
+       POSTGRES_USER: postgres
+       POSTGRES_PASSWORD: postgresql
+       POSTGRES_DB: teste
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+       db:
+        condition: service_healthy
+     
+      
