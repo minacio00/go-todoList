@@ -47,6 +47,7 @@ func Connectdb() {
 	}
 	println("Connection Opened to database")
 	db.Logger = logger.Default.LogMode(logger.Info)
-	db.AutoMigrate(&models.User{}, &models.Task{})
+	db.AutoMigrate(&models.User{}, &models.Task{}, &models.List{})
+
 	Db = db
 }
