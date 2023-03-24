@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 
 	_ "github.com/lib/pq"
 	"github.com/minacio00/go-todoList/models"
@@ -28,7 +27,6 @@ func (db *dbCredentials) formatStr() string {
 } // "user=postgres host=192.168.1.2 port=5432 password=postgresql dbname=teste sslmode=disable"
 
 func Connectdb() {
-	fmt.Println("hello")
 	sql.Drivers()
 	creds := dbCredentials{
 		client: "postgresql", user: "postgres",
@@ -39,14 +37,14 @@ func Connectdb() {
 	}
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN: creds.formatStr(),
-	}), &gorm.Config{})
-
+	}), &gorm.Config{Logger: logger.Default.LogMode(logger.Error)})
 	if err != nil {
 		println(err)
 		panic(err)
 	}
+
 	println("Connection Opened to database")
-	db.Logger = logger.Default.LogMode(logger.Info)
+	// db.Logger = logger.Default.LogMode(logger.Info)
 	db.AutoMigrate(&models.User{}, &models.Task{}, &models.List{})
 
 	Db = db

@@ -7,6 +7,7 @@ import (
 )
 
 func NewUser(c *fiber.Ctx) error {
+	c.Accepts("application/json")
 	var db = database.Db
 	var user models.User
 	if err := c.BodyParser(&user); err != nil {
@@ -15,6 +16,7 @@ func NewUser(c *fiber.Ctx) error {
 	db.Create(&user)
 	return c.Status(200).JSON(user)
 }
+
 func GetUsers(c *fiber.Ctx) error {
 	users := []models.User{}
 	database.Db.Find(&users)
@@ -24,19 +26,25 @@ func GetUsers(c *fiber.Ctx) error {
 func GetUser(c *fiber.Ctx) error {
 	id, err := c.ParamsInt("id")
 	if err != nil {
-		return c.Status(400).JSON("Please ensure that :id is an integer")
+		response := struct {
+			Message string `json:"message"`
+		}{
+			Message: "id is not an integer",
+		}
+		return c.Status(400).JSON(response)
 	}
 
 	var user *models.User
 
 	database.Db.Find(&user, "id = ?", id)
 	if user.ID == 0 {
-		return c.Status(404).JSON("id not found")
+		response := struct {
+			Message string
+		}{
+			Message: "id not found",
+		}
+		return c.Status(404).JSON(response)
 	}
-
-	// if err := findUser(id, &user); err != nil {
-	// 	return c.Status(400).JSON(err.Error())
-	// }
 
 	return c.Status(200).JSON(&user)
 }
