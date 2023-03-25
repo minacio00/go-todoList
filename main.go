@@ -18,6 +18,8 @@ func StartServer() *fiber.App {
 	app.Delete("/users/:id", controllers.DeleteUser)
 
 	app.Post("/lists", controllers.NewList)
+	app.Get("/lists/:id", controllers.FindList)
+	app.Get("/lists/", controllers.GetLists)
 	app.Listen(":8080")
 	return app
 }
